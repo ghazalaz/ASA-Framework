@@ -38,11 +38,20 @@ def main():
         print "Usage: discover.py #adapter"
         return
     adapter = int(sys.argv[1])
-    discovered_devices = general_scan(adapter)
+    discovered_devices = dict()
+    discovered_devices.update(general_scan(adapter,20))
     print len(discovered_devices)
-    with open("device_list.txt","w") as file:
+
+    with open("device_list.txt","r") as file:
+        device_list = set()
+        for line in file:
+            device_list.add(line.rstrip("\n"))
         for device in discovered_devices:
+            device_list.add(device)
+    with open("device_list.txt", "w") as file:
+        for device in device_list:
             file.write(device+"\n")
+            print device
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from blesuite import connection_manager
-from blesuite import pybt
 import pickle
+import time
 import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -32,7 +32,7 @@ def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=Fal
         success = connectionManager.connect(connection)
         if not success:
             print "Failed to connected to target device"
-            return
+            return None
         logger.debug("Connected!")
         device = connectionManager.smart_scan(connection, device=None,
                                               look_for_device_info=(not skip_device_info_query),
@@ -47,21 +47,16 @@ def main():
             #address = "C1:32:8C:86:BE:F8"
             address_type = "random"
             logging.debug('Connecting to {0}'.format(address))
+            print 'Connecting to {0}'.format(address)
             device = ble_run_smart_scan(address,adapter,address_type)
-            print type(device.device_information)
-            model_number = [x for x in device.device_information if x[0] == "Model number string"]
-            print model_number
-            for item in device.device_information:
-                if item[0] == "Model number string":
-                    print item
-            #print device.print_device_structure()
-
+            if device:
+                print type(device.device_information)
+                model_number = [x for x in device.device_information if x[0] == "Model number string"]
+                print model_number
+                for item in device.device_information:
+                    if item[0] == "Model number string":
+                        print item
+                #print device.print_device_structure()
+            time.sleep(20)
 if __name__ == "__main__":
-    print "here"
-    adapter = 0
-    with connection_manager.BLEConnectionManager(adapter, 'central') as connectionManager:
-        connectionManager.scan(10)
-        discovered_devices = connectionManager.get_discovered_devices()
-        for device in discovered_devices:
-            print device
-    #main()
+    main()
