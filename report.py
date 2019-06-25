@@ -1,7 +1,7 @@
 import os
 import pickle
 
-with open("device_list.txt","r") as addresses:
+with open("devices/device_list.txt","r") as addresses:
     for address in addresses:
         print "reading "+address.rstrip()+".dev"
         if os.path.isfile(address.rstrip("\r\n")+".dev"):
