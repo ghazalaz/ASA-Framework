@@ -40,23 +40,44 @@ def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=Fal
     return device
 
 
+# def main():
+#     with open("device_list.txt","r") as addresses:
+#         for address in addresses:
+#             adapter = 0
+#             #address = "C1:32:8C:86:BE:F8"
+#             address_type = "random"
+#             logging.debug('Connecting to {0}'.format(address))
+#             print 'Connecting to {0}'.format(address)
+#             device = ble_run_smart_scan(address,adapter,address_type)
+#             if device:
+#                 print type(device.device_information)
+#                 model_number = [x for x in device.device_information if x[0] == "Model number string"]
+#                 print model_number
+#                 for item in device.device_information:
+#                     if item[0] == "Model number string":
+#                         print item
+#                 #print device.print_device_structure()
+#             time.sleep(20)
 def main():
-    with open("device_list.txt","r") as addresses:
-        for address in addresses:
-            adapter = 0
-            #address = "C1:32:8C:86:BE:F8"
-            address_type = "random"
-            logging.debug('Connecting to {0}'.format(address))
-            print 'Connecting to {0}'.format(address)
-            device = ble_run_smart_scan(address,adapter,address_type)
-            if device:
-                print type(device.device_information)
-                model_number = [x for x in device.device_information if x[0] == "Model number string"]
-                print model_number
-                for item in device.device_information:
-                    if item[0] == "Model number string":
-                        print item
-                #print device.print_device_structure()
-            time.sleep(20)
+    import sys, os
+    if len(sys.argv) < 2:
+        print "Usage: scan.py #address"
+        return
+    address = sys.argv[1]
+    adapter = 1
+    address_type = "public"
+    logging.debug('Connecting to {0}'.format(address))
+    print 'Connecting to {0}'.format(address)
+    device = ble_run_smart_scan(address,adapter,address_type)
+    if device:
+        print device
+        model_number = [x for x in device.device_information if x[0] == "Model number string"]
+        with open(address + ".dev", "wb") as dev_file:
+            pickle.dump(device, dev_file)
+        for item in device.device_information:
+            if item[0] == "Model number string":
+                print item
+        print device.print_device_structure()
+
 if __name__ == "__main__":
     main()

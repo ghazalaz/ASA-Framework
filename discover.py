@@ -33,7 +33,7 @@ def general_scan(adapter=0,timeout=50):
 
 
 def main():
-    import sys
+    import sys,os
     if len(sys.argv) < 2:
         print "Usage: discover.py #adapter"
         return
@@ -41,13 +41,14 @@ def main():
     discovered_devices = dict()
     discovered_devices.update(general_scan(adapter,20))
     print len(discovered_devices)
-
-    with open("device_list.txt","r") as file:
-        device_list = set()
-        for line in file:
-            device_list.add(line.rstrip("\n"))
-        for device in discovered_devices:
-            device_list.add(device)
+    device_list = set()
+    os.path.isfile("device_list.txt")
+    if os.path.isfile("device_list.txt"):
+        with open("device_list.txt","r") as file:
+            for line in file:
+                device_list.add(line.rstrip("\n"))
+            for device in discovered_devices:
+                device_list.add(device)
     with open("device_list.txt", "w") as file:
         for device in device_list:
             file.write(device+"\n")
