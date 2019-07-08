@@ -40,16 +40,16 @@ def main():
     adapter = int(sys.argv[1])
     discovered_devices = dict()
     discovered_devices.update(general_scan(adapter,20))
-    print len(discovered_devices)
+    print "{0} New".format(len(discovered_devices))
     device_list = set()
-    os.path.isfile("device_list.txt")
-    if os.path.isfile("device_list.txt"):
-        with open("device_list.txt","r") as file:
+    os.path.isfile("devices/device_list.txt")
+    if os.path.isfile("devices/device_list.txt"):
+        with open("devices/device_list.txt","r") as file:
             for line in file:
                 device_list.add(line.rstrip("\n"))
             for device in discovered_devices:
                 device_list.add(device)
-    with open("device_list.txt", "w") as file:
+    with open("devices/device_list.txt", "w") as file:
         for device in device_list:
             file.write(device+"\n")
             print device

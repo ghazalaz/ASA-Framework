@@ -3,9 +3,9 @@ import pickle
 
 with open("devices/device_list.txt","r") as addresses:
     for address in addresses:
-        print "reading "+address.rstrip()+".dev"
-        if os.path.isfile(address.rstrip("\r\n")+".dev"):
-            file = open(address.rstrip("\r\n")+".dev","rb")
+        print "Reading "+address.rstrip()+".dev"
+        if os.path.isfile("devices/"+address.rstrip("\r\n")+".dev"):
+            file = open("devices/"+address.rstrip("\r\n")+".dev","rb")
             device = pickle.load(file)
             print '----------------------------------------------------------'
             for item in device.device_information:

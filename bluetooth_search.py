@@ -58,23 +58,17 @@ def search(model_number, manufacturer):
         #print qdid
         url = "https://platformapi.bluetooth.com/api/project/GetReferencedQdid"
         response = requests.get(url,{'listingId': item['ListingId'],'qdid':qdid})
-        data = json.loads(response.text)
-        # for row in data:
-        #     if row =="Listing" or row == "ReferencedQDIDs" or row == "DWAlerts" or row == "Qualification":
-        #         print row
-        #         for it in data[row]:
-        #             print it
-        if item['QDIDs'] is not None:
-            qdids = item['QDIDs'].split('-')
-            #print qdids
+        qdids_data = json.loads(response.text)
+
         if int(item['NumEndProductListings']) > 0:
             url = "https://platformapi.bluetooth.com/api/Platform/Listings/{0}/ProductListings/".format(
                 item['ListingId'])
             response = requests.get(url)
             plistings = json.loads(response.text)
-            #print plistings
+            plistings_list = []
             for p in plistings:
-                print p
+                #print p
+                plistings_list.append([item['CompanyName'], p['MarketingName'], p['Model'],qdids_data['Listing']['Member']['CompanyName'],qdids_data['Listing']['ModelNumber']])
                 products_file.writerow([item['CompanyName'],
                                         p['ListingId'], p['ProductListingId'], p['MemberId'], p['UserId'],
                                         p['Model'].encode("utf-8"), p['Series'], p['MarketingName'],
@@ -91,6 +85,7 @@ def search(model_number, manufacturer):
                                         p['ContactPhone'], p['Make']])
         i = i + 1
     f.close()
+    return plistings_list
 
 
 # def get_qdids(listingId):
@@ -129,11 +124,14 @@ def search(model_number, manufacturer):
 
 def main():
     if len(sys.argv) < 3:
-        print "Usage: btsearch.py model string number manufacturer"
+        print "Usage: btsearch.py model_number_string manufacturer"
         return
-    model_string = sys.argv[1] #search("wbp02")
+    model_number = sys.argv[1] #search("wbp02")
     manufacturer = sys.argv[2] #withings
-    search(model_string, manufacturer)
+
+    result = search(model_number, manufacturer)
+    print "Company Name | Marketing Name | Device Model | Referenced Qualified Design | Model Number \n{0} ".format(result[0])
+
 
 if __name__ == '__main__':
     main()
