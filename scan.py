@@ -41,7 +41,7 @@ def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=Fal
 
 
 def main():
-    import sys, os
+    import sys, json
     if len(sys.argv) < 2:
         print "Usage: scan.py #address"
         return
@@ -55,6 +55,10 @@ def main():
         with open("devices/"+address + ".dev", "wb") as dev_file:
             pickle.dump(device, dev_file)
         device.print_device_structure()
+        device_json = json.dump(device.export_device_to_dictionary(),indent=4)
+        f = open(address + ".json","w")
+        f.write(device_json)
+        f.close()
 
 if __name__ == "__main__":
     main()
