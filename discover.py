@@ -5,6 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 import pickle
+import globals
 def general_scan(adapter=0,timeout=50):
     """
     Scan for BTLE Devices and print out results
@@ -42,14 +43,14 @@ def main():
     discovered_devices.update(general_scan(adapter,20))
     print "{0} New".format(len(discovered_devices))
     device_list = set()
-    os.path.isfile("devices/device_list.txt")
-    if os.path.isfile("devices/device_list.txt"):
-        with open("devices/device_list.txt","r") as file:
+    dev_list_file = globals.devices/"device_list.txt"
+    if os.path.isfile(str(dev_list_file)):
+        with open(str(dev_list_file),"r") as file:
             for line in file:
                 device_list.add(line.rstrip("\n"))
             for device in discovered_devices:
                 device_list.add(device)
-    with open("devices/device_list.txt", "w") as file:
+    with open(str(dev_list_file), "w") as file:
         for device in device_list:
             file.write(device+"\n")
             print device

@@ -1,6 +1,8 @@
 from blesuite import connection_manager
 import pickle
 import time
+import sys, json
+import globals
 import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -21,7 +23,7 @@ def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=Fal
     :type adapter: str
     :type addressType: str
     :type securityLevel: str
-    :return:
+    :return:/usr/lib/python2.7/json/decoder.py
     """
     if address is None:
         raise Exception("%s Bluetooth address is not valid. Please supply a valid Bluetooth address value." % address)
@@ -41,7 +43,6 @@ def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=Fal
 
 
 def main():
-    import sys, json
     if len(sys.argv) < 2:
         print "Usage: scan.py #address"
         return
@@ -49,15 +50,21 @@ def main():
     adapter = 1
     address_type = "random"
     logging.debug('Connecting to {0}'.format(address))
+    print ('Connecting to {0}'.format(address))
     device = ble_run_smart_scan(address, adapter, address_type)
+    destination = globals.devices
     if device:
-        model_number = [x for x in device.device_information if x[0] == "Model number string"]
-        with open("devices/"+address + ".dev", "wb") as dev_file:
-            pickle.dump(device, dev_file)
+        #model_number = [x for x in device.device_information if x[0] == "Model number string"]
+        fname = str(destination / str(address).lower())
+        #with open(fname + ".dev", "wb") as dev_file:
+        #    pickle.dump(device, dev_file)
         device.print_device_structure()
-        device_json = json.dump(device.export_device_to_dictionary(),indent=4)
-        f = open(address + ".json","w")
+        device_json = json.dumps(device.export_device_to_dictionary())
+        f = open(fname + ".json","w")
         f.write(device_json)
+        f.close()
+        f = open(fname+"device_info.json")
+        f.write(json.dumps(device.device_information))
         f.close()
 
 if __name__ == "__main__":

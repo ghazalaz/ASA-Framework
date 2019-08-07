@@ -88,40 +88,6 @@ def search(model_number, manufacturer):
     return plistings_list
 
 
-# def get_qdids(listingId):
-#     url = " https://platformapi.bluetooth.com/api/Platform/Listings/{0}/QDIDs".format(listingId)
-#     response = requests.post(url)
-
-#     qdids = json.loads(response.text)
-#     print qdids
-#
-#
-# def get_listingId(searchString):
-#     reload(sys)
-#     sys.setdefaultencoding('utf8')
-#     payload = {'bqaApprovalStatusId': -1,
-#                'bqaLockStatusId': -1,
-#                'layers': [],
-#                'listingDateEarliest': "",
-#                'listingDateLatest': "",
-#                'maxResults': 5000,
-#                'memberId': None,
-#                'productTypeId': 0,
-#                'searchDeclarationOnly': True,
-#                'searchEndProductList': False,
-#                'searchMyCompany': False,
-#                'searchPRDProductList': True,
-#                'searchQualificationsAndDesigns': True,
-#                'searchString': searchString,
-#                'specName': 0,
-#                'userId': 0}
-#     url = "https://platformapi.bluetooth.com/api/Platform/Listings/Search"
-#     response = requests.post(url, data=payload)
-#
-#     data = json.loads(response.text)
-#     for item in data:
-#         return item['ListingId']
-
 def main():
     if len(sys.argv) < 3:
         print "Usage: btsearch.py model_number_string manufacturer"

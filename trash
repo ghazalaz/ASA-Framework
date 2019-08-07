@@ -1,0 +1,14 @@
+---------------RUNNING WS-SLAVE ----------------------
+running nodejs centerals
+
+from Naked.toolshed.shell import execute_js,muterun_js
+from pathlib import Path
+node_folder = Path("gattacker-master/")
+ws_slave = node_folder/"ws-slave.js"
+success = muterun_js(str(ws_slave))
+print "continuting ... "
+if success:
+    print "Running ws-slave ... "
+
+scan = node_folder/"scan.js"
+success = execute_js(str(scan))
