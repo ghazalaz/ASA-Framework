@@ -2,10 +2,14 @@ from blesuite import connection_manager
 import time
 import gevent
 import logging
+import sys, os, json
+from globals import devices
+
+
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-import pickle
-import globals
+
+
 def general_scan(adapter=0,timeout=50):
     """
     Scan for BTLE Devices and print out results
@@ -34,16 +38,26 @@ def general_scan(adapter=0,timeout=50):
 
 
 def main():
-    import sys,os
     if len(sys.argv) < 2:
         print "Usage: discover.py #adapter"
         return
     adapter = int(sys.argv[1])
-    discovered_devices = dict()
-    discovered_devices.update(general_scan(adapter,20))
+    discovered_devices = general_scan(adapter,20)
     print "{0} New".format(len(discovered_devices))
+
     device_list = set()
-    dev_list_file = globals.devices/"device_list.txt"
+    dev_list_file = devices/"device_list.txt"
+    for item in discovered_devices:
+        print item
+        data = discovered_devices[item][1]
+        for p in data:
+            print type(p),p
+
+    for device in discovered_devices:
+        with open(str(devices / device) + "_adv.json", "w") as adv_file:
+            adv_file.write(json.dumps(str(discovered_devices[device][1]))) # ERROR HERE ########################
+
+
     if os.path.isfile(str(dev_list_file)):
         with open(str(dev_list_file),"r") as file:
             for line in file:
