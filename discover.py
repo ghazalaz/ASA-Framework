@@ -43,20 +43,20 @@ def main():
         return
     adapter = int(sys.argv[1])
     discovered_devices = general_scan(adapter,20)
+
     print "{0} New".format(len(discovered_devices))
 
     device_list = set()
     dev_list_file = devices/"device_list.txt"
+    print "printing discovered devices"
     for item in discovered_devices:
         print item
         data = discovered_devices[item][1]
-        for p in data:
-            print type(p),p
+        print data
 
     for device in discovered_devices:
         with open(str(devices / device) + "_adv.json", "w") as adv_file:
             adv_file.write(json.dumps(str(discovered_devices[device][1]))) # ERROR HERE ########################
-
 
     if os.path.isfile(str(dev_list_file)):
         with open(str(dev_list_file),"r") as file:
