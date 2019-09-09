@@ -2,7 +2,7 @@ from blesuite import connection_manager
 import pickle
 import time
 import sys, json
-import globals
+from globals import devices
 import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -43,29 +43,23 @@ def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=Fal
 
 
 def main():
-    if len(sys.argv) < 2:
-        print "Usage: scan.py #address"
+    if len(sys.argv) < 3:
+        print "Usage: scan.py #address #adapter"
         return
     address = sys.argv[1]
-    adapter = 1
+    adapter = int(sys.argv[2])
     address_type = "random"
     logging.debug('Connecting to {0}'.format(address))
     print ('Connecting to {0}'.format(address))
     device = ble_run_smart_scan(address, adapter, address_type)
-    destination = globals.devices
     if device:
-        #model_number = [x for x in device.device_information if x[0] == "Model number string"]
-        fname = str(destination / str(address).lower())
-        #with open(fname + ".dev", "wb") as dev_file:
-        #    pickle.dump(device, dev_file)
+        fname = str(devices / str(address).lower())
         device.print_device_structure()
         device_json = json.dumps(device.export_device_to_dictionary())
         f = open(fname + ".json","w")
         f.write(device_json)
         f.close()
-        f = open(fname+"device_info.json")
-        f.write(json.dumps(device.device_information))
-        f.close()
+
 
 if __name__ == "__main__":
     main()

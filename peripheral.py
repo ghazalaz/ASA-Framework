@@ -1,4 +1,4 @@
-from globals import devices,PERIPHERAL_ROLE_ADDR,toHex, toStr
+from globals import devices
 import os,json
 from blesuite.entities.gatt_device import BLEDevice
 import blesuite.utils.gap_utils as gap_utils
@@ -39,45 +39,53 @@ def scan_device(adapter, address, address_type="random", skip_device_info_query=
                                               attempt_desc_read=attempt_read, timeout=timeout)
         return target_device
 
-def connect(adapter, peripheral):
+def advertise(adapter, peripheral,data):
     with connection_manager.BLEConnectionManager(adapter, 'peripheral') as connectionManager:
         #peripheral, advertising_data_list = load_device(address)
-        ret = bdaddr.bdaddr(("hci"+str(adapter)), peripheral.address)
-        if ret == -1:
-            raise ValueError("Spoofing failed.")
-        else:
-            print "Address Spoofed."
+        #ret = bdaddr.bdaddr(("hci"+str(adapter)), peripheral.address)
+        #if ret == -1:
+        #    raise ValueError("Spoofing failed.")
+        #else:
+        #    print "Address Spoofed."
 
-        local_name = "TargetDevice"
-        complete_local_name = "TargetDevice"
+        #local_name = "Name"
+        #complete_local_name = "Name2"
         # Generate integer representation of advertisement data flags using helper function
-        flag_int = gap_utils.generate_ad_flag_value(le_general_discoverable=True, bredr_not_supported=True)
+        #flag_int = gap_utils.generate_ad_flag_value(le_general_discoverable=True, bredr_not_supported=True)
         # Generate advertisement data entry using helper function
-        flag_entry = gap_utils.advertisement_data_entry_builder("Flags", chr(flag_int))
+        #flag_entry = gap_utils.advertisement_data_entry_builder("Flags", chr(flag_int))
         # Generate advertisement data entry for shortened local name using helper function
-        short_local_name_entry = gap_utils.advertisement_data_entry_builder("Shortened Local Name", complete_local_name)
+        #short_local_name_entry = gap_utils.advertisement_data_entry_builder("Shortened Local Name", complete_local_name)
         # Generate advertisement data entry for complete local name using helper function
-        complete_local_name_entry = gap_utils.advertisement_data_entry_builder("Complete Local Name",local_name)
+        #complete_local_name_entry = gap_utils.advertisement_data_entry_builder("Complete Local Name", local_name)
         # Build advertisement data list
-        ad_entries_list = [flag_entry, short_local_name_entry,complete_local_name_entry]
+        #ad_entries_list = [flag_entry, short_local_name_entry,complete_local_name_entry]
         # Build finalized advertisement data from list
-        ad_entries = gap_utils.advertisement_data_complete_builder(ad_entries_list)
+        #ad_entries = gap_utils.advertisement_data_complete_builder(ad_entries_list)
         # Set advertising data sent in advertising packet
         #connectionManager.set_advertising_data(ad_entries)
         # Set data sent in response to an inquiry packet
         #connectionManager.set_scan_response_data(ad_entries)
+        #connectionManager.set_local_name("MyFitnessTracker")
         # Set advertising parameters - advertising type, channel map, interval_min, interval_max,
         # destination address (only used if using directed advertising, just set to 00:00:00:00:00:00),
         # destination address type (only used if using directed advertising, set to 0x00 otherwise which is public)
         #connectionManager.set_advertising_parameters(gap_utils.gap.GAP_ADV_TYPES['ADV_IND'], 7, 0x0020, 0x00a0,
-        #                                             "00:00:00:00:00:00", 0x00)
+        #                                            "00:00:00:00:00:00", 0x00)
         connectionManager.initialize_gatt_server_from_ble_device(peripheral,True)
+        gatt_server = connectionManager.get_gatt_server()
+        gatt_server.debug_print_db()
+        connectionManager.start_advertising()
 
         result, ble_connection = connectionManager.advertise_and_wait_for_connection()
 
     if result:
         print "We are connected!"
-        connectionManager.smart_scan(ble_connection, attempt_desc_read=True)
+        connectionManager.smart_scan(ble_connection, look_for_device_info=False, timeout=5)
+        #data = "41542b424f4e443a4f4b0d0a".decode("hex")
+        #handle = "0x0e"
+        #connectionManager.gatt_write_handle_async(ble_connection,int(handle,0),data)
+        gevent.sleep(50)
     else:
         print "Timeout reached. No one connected."
 
@@ -86,11 +94,12 @@ def main():
     if len(sys.argv) < 3:
         print "Usage : peripheral address adapter"
         return
-    address = sys.argv[1]
+    address = sys.argv[1].lower()
     adapter = int(sys.argv[2])
-    peripheral = scan_device(adapter, address)
-    peripheral.print_device_structure()
-    connect(adapter, peripheral)
+    peripheral,data = load_device(address)
+    if peripheral != None:
+        print "Peripheral scanned successfully."
+    advertise(adapter, peripheral,data)
 
 
 if __name__ == "__main__":
