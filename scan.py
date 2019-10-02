@@ -48,6 +48,8 @@ def main():
         return
     address = sys.argv[1]
     adapter = int(sys.argv[2])
+    address = "c1:32:8c:86:be:f8"
+    adapter = 1
     address_type = "random"
     logging.debug('Connecting to {0}'.format(address))
     print ('Connecting to {0}'.format(address))
@@ -55,6 +57,7 @@ def main():
     if device:
         fname = str(devices / str(address).lower())
         device.print_device_structure()
+        device.get_services()
         device_json = json.dumps(device.export_device_to_dictionary())
         f = open(fname + ".json","w")
         f.write(device_json)
