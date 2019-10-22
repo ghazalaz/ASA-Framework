@@ -98,12 +98,11 @@ def advertise(adapter, peripheral,data):
 
     if result:
         print "We are connected!"
-        phone = connectionManager.smart_scan(ble_connection, look_for_device_info=False, timeout=5)
-        phone.print_device_structure()
+        connectionManager.smart_scan(ble_connection, look_for_device_info=False, timeout=5)
         #data = "41542b424f4e443a4f4b0d0a".decode("hex")
         #handle = "0x0e"
         #connectionManager.gatt_write_handle_async(ble_connection,int(handle,0),data)
-
+        gevent.sleep(50)
     else:
         print "Timeout reached. No one connected."
 

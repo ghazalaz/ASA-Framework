@@ -1,6 +1,7 @@
 from ares import CVESearch
 import requests
 import csv
+import re
 
 
 class CWE:
@@ -16,17 +17,19 @@ class CWE:
 
 class CVE:
 
-    def __init__(self,cvss,impact,access,cwe,vuln_conf,last_modified):
+    def __init__(self, cve_id, cvss, impact, access, cwe, vuln_conf, last_modified, summary):
+        self.cve_id = cve_id
         self.cvss = cvss
         self.impact = impact
         self.access = access
         self.cwe = cwe
         self.vuln_conf = vuln_conf
         self.last_modified = last_modified
+        self.summary = summary
 
     def __str__(self):
-        return "cvss: {0}\nimpact:{1}\naccess: {2}\ncwe: {3}\nvulnerable configuration: {4}" \
-               "\nlast-modified: {5}\n".format(self.cvss,self.impact,self.access,self.cwe,self.vuln_conf,self.last_modified)
+        return "cve-id:{7}, \ncvss: {0}\nimpact:{1}\naccess: {2}\ncwe: {3}\nvulnerable configuration: {4}" \
+               "\nlast-modified: {5}\nsummary: {6}\n".format(self.cvss,self.impact,self.access,self.cwe,self.vuln_conf,self.last_modified,self.summary,self.cve_id)
 
 
 CWE_columns = {'CWE-ID', 'Name', 'Weakness Abstraction', 'Status', 'Description', 'Extended Description', 'Related Weaknesses', 'Weakness Ordinalities', 'Applicable Platforms',
@@ -42,49 +45,78 @@ def load_cwe(file_name):
         cwe_list.append(line)
 
 
-def search(keyword):
-    cve = CVESearch()
-    cve_list = []
+def exact_match(expression, target):
+    # target must be a list
+    for t in target:
+        if re.search(r'\b'+expression+r'\b', t):
+            return True
+    return False
+
+
+def extract_cve_details(keyword):
     try:
-        print "browsing {0}\n".format(keyword)
-        res = cve.search(keyword)
-        data = res['data']
+        cve = CVESearch()
+        cve_list = []
+        data = cve.search(keyword)['data']
         for cve_item in data:
-            nvd = cve.id(cve_item['id'])
-            #print nvd['cvss']
-            #print cve_item
+            if re.search(r'\b' + keyword.lower() + r'\b', cve_item['summary'].lower()):
+                print "matched " + keyword + " in " + str(cve_item['id'])
+            else:
+                print "Not Matched"
+                continue
             cvss = [cve_item[xx] for xx in cve_item if xx == "cvss"]
             impact = [cve_item[xx] for xx in cve_item if xx == "impact"]
             access = [cve_item[xx] for xx in cve_item if xx == "access"]
             vuln_conf = [cve_item[xx] for xx in cve_item if xx == "vulnerable_configuration"]
             last_modified = [cve_item[xx] for xx in cve_item if xx == "last-modified"]
             cwe_id = [cve_item[xx].encode("UTF8") for xx in cve_item if xx == "cwe"]
-            cwe_id = cwe_id[0].replace("CWE-",'')
+            if len(cwe_id) == 0:
+                continue
+            cwe_id = cwe_id[0].replace("CWE-", '')
             res = [row for row in cwe_list if row['CWE-ID'] == cwe_id]
-            if len(res) != 0:
+            if res:
                 res = res[0]
-                cwe = CWE(cwe_id,res['Name'],(res['Likelihood of Exploit'] if res['Likelihood of Exploit'] else None))
+                cwe = CWE(cwe_id, res['Name'], (res['Likelihood of Exploit'] if res['Likelihood of Exploit'] else None))
             else:
                 cwe = None
-            cve_obj = CVE(cvss,impact,access,cwe,vuln_conf,last_modified)
+            cve_obj = CVE(cve_item['id'],cvss, impact, access, cwe, vuln_conf, last_modified,cve_item['summary'])
             cve_list.append(cve_obj)
         return cve_list
+    except requests.exceptions.RequestException as e:
+        print e
+
+def search(company,product):
+    try:
+        cve = CVESearch()
+        #res = cve.search(keyword)
+        #vendor = cve.browse(company)
+        #print type(res)
+        #if vendor and isinstance(vendor,dict):
+        print "Searching {0}\n".format(company.encode('ascii', 'ignore'))
+        cve_list = extract_cve_details(company)
+        print "Searching {0}\n".format(product.encode('ascii', 'ignore'))
+        cve_list.extend(extract_cve_details(product))
+        return cve_list
+
+        #else:
+        #    return []
     except requests.exceptions.RequestException as e:
         print e
 
 
 
 
-keyword_list = {"Athos", "Nordic", "nRF51x22"}
-keyword_list = {"TrackR bravo", "Nordic", "nRF51x22"}
-
+keyword_list = {"MAD Apparel, Inc.","Athos", "Nordic", "nRF51x22"}
+#keyword_list = {"TrackR", "Nordic", "nRF51x22"}
+#keyword_list = {"SimpleLink","BLE-STACK"}
+keyword_list = {("Tapplock","Tapplock one+"),("Adero, Inc.","TrackR bravo"),("Nordic Semiconductor ASA","nRF51x22 CF package")}
 
 def main():
     import sys
-    keyword_list = {sys.argv[1]}
+    keywords = keyword_list
     load_cwe('CWE-listing.csv')
-    for keyword in keyword_list:
-        result = search(keyword)
+    for company,product in keywords:
+        result = search(company,product)
         print "{0} CVE Found: \n ".format(len(result))
         for cve_obj in result:
             print cve_obj

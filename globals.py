@@ -1,11 +1,13 @@
 from pathlib import Path
-import os,json
+import os,json,pickle
 from blesuite.entities.gatt_device import BLEDevice
 
 
 PERIPHERAL_ROLE_ADDR = "00:1A:7D:DA:71:13"
 devices = Path("devices/")
-
+adapter = 0
+PYTHON_PATH = "/home/gamel/venv2/bin/python-sudo.sh"
+PROJECT_PATH = "/home/gamel/PycharmProjects/Framework"
 
 def print_device(address=""):
     if not address:
@@ -28,6 +30,10 @@ def print_device(address=""):
                 device.import_device_from_dictionary(dic)
                 device.print_device_structure()
 
+        if os.path.isfile(str(devices / address) + ".device_info"):
+            with open(str(devices / address) + ".device_info", "r") as file:
+                device_info = pickle.loads(file.read())
+                print device_info
 
 # convert string to hex
 def toHex(s):
