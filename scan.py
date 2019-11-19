@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 
-def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=False, attempt_read=False,
+def ble_run_smart_scan(address, adapter, addressType, skip_device_info_query=False, attempt_read=True,
                        timeout=None):
     """
     Used by command line tool to initiate and print results for
@@ -58,6 +58,9 @@ def main():
         fname = str(globals.devices / str(address).lower())
         device.print_device_structure()
         device.get_services()
+        f = open(fname+".txt","w")
+        f.write(device)
+        f.close()
         device_json = json.dumps(device.export_device_to_dictionary())
         f = open(fname + ".json","w")
         f.write(device_json)

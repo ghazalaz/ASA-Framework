@@ -51,3 +51,31 @@ def toStr(s):
     return s and chr(int(s[:2], base=16)) + toStr(s[2:]) or ''
 
 
+def hamdist(str1, str2):
+    """Count the # of differences between equal length strings str1 and str2"""
+
+    diffs = 0
+    for ch1, ch2 in zip(str1, str2):
+        if ch1 != ch2:
+            diffs += 1
+    return diffs
+
+
+from difflib import SequenceMatcher
+
+
+def longestSubstring(str1, str2):
+    # initialize SequenceMatcher object with
+    # input string
+    seqMatch = SequenceMatcher(None, str1, str2)
+
+    # find match of longest sub-string
+    # output will be like Match(a=0, b=0, size=5)
+    match = seqMatch.find_longest_match(0, len(str1), 0, len(str2))
+
+    # print longest substring
+    if (match.size != 0):
+        print (str1[match.a: match.a + match.size]);
+        return str1[match.a: match.a + match.size]
+    else:
+        print ('No longest common sub-string found')

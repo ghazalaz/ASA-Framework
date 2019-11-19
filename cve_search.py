@@ -62,13 +62,13 @@ def extract_cve_details(keyword):
             if re.search(r'\b' + keyword.lower() + r'\b', cve_item['summary'].lower()):
                 print "matched " + keyword + " in " + str(cve_item['id'])
             else:
-                print "Not Matched"
+                #print "Not Matched"
                 continue
             cvss = [cve_item[xx] for xx in cve_item if xx == "cvss"]
             impact = [cve_item[xx] for xx in cve_item if xx == "impact"]
             access = [cve_item[xx] for xx in cve_item if xx == "access"]
             vuln_conf = [cve_item[xx] for xx in cve_item if xx == "vulnerable_configuration"]
-            last_modified = [cve_item[xx] for xx in cve_item if xx == "last-modified"]
+            last_modified = [cve_item[xx] for xx in cve_item if xx == "Modified"]
             cwe_id = [cve_item[xx].encode("UTF8") for xx in cve_item if xx == "cwe"]
             if len(cwe_id) == 0:
                 continue
@@ -76,12 +76,17 @@ def extract_cve_details(keyword):
             res = [row for row in cwe_list if row['CWE-ID'] == cwe_id]
             if res:
                 res = res[0]
+                print res
                 cwe = CWE(cwe_id, res['Name'], (res['Likelihood of Exploit'] if res['Likelihood of Exploit'] else None))
             else:
                 cwe = None
-            cve_obj = CVE(cve_item['id'],cvss, impact, access, cwe, vuln_conf, last_modified,cve_item['summary'])
+            #cve_obj = CVE(cve_item['id'],cvss, impact, access, cwe, vuln_conf, last_modified,cve_item['summary'])
+            cve_obj = CVE(cve_item['id'], cve_item['cvss'], cve_item['impact'], cve_item['access'], cwe, cve_item['vulnerable_configuration'], cve_item['Modified'], cve_item['summary'])
             cve_list.append(cve_obj)
         return cve_list
+    except Timeout:
+        logger.exception('Timeout while connecting to %s' % url)
+        return []
     except requests.exceptions.RequestException as e:
         print e
 
