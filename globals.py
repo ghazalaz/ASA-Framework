@@ -1,11 +1,13 @@
 from pathlib import Path
-import os,json
+import os,json,pickle
 from blesuite.entities.gatt_device import BLEDevice
 
 
 PERIPHERAL_ROLE_ADDR = "00:1A:7D:DA:71:13"
 devices = Path("devices/")
-
+adapter = 0
+PYTHON_PATH = "/home/gamel/venv2/bin/python-sudo.sh"
+PROJECT_PATH = "/home/gamel/PycharmProjects/Framework"
 
 def print_device(address=""):
     if not address:
@@ -28,6 +30,10 @@ def print_device(address=""):
                 device.import_device_from_dictionary(dic)
                 device.print_device_structure()
 
+        if os.path.isfile(str(devices / address) + ".device_info"):
+            with open(str(devices / address) + ".device_info", "r") as file:
+                device_info = pickle.loads(file.read())
+                print device_info
 
 # convert string to hex
 def toHex(s):
@@ -45,3 +51,31 @@ def toStr(s):
     return s and chr(int(s[:2], base=16)) + toStr(s[2:]) or ''
 
 
+def hamdist(str1, str2):
+    """Count the # of differences between equal length strings str1 and str2"""
+
+    diffs = 0
+    for ch1, ch2 in zip(str1, str2):
+        if ch1 != ch2:
+            diffs += 1
+    return diffs
+
+
+from difflib import SequenceMatcher
+
+
+def longestSubstring(str1, str2):
+    # initialize SequenceMatcher object with
+    # input string
+    seqMatch = SequenceMatcher(None, str1, str2)
+
+    # find match of longest sub-string
+    # output will be like Match(a=0, b=0, size=5)
+    match = seqMatch.find_longest_match(0, len(str1), 0, len(str2))
+
+    # print longest substring
+    if (match.size != 0):
+        print (str1[match.a: match.a + match.size]);
+        return str1[match.a: match.a + match.size]
+    else:
+        print ('No longest common sub-string found')
