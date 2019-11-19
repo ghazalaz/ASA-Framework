@@ -68,7 +68,7 @@ def search(model_number, manufacturer):
             plistings_list = []
             for p in plistings:
                 #print p
-                plistings_list.append([item['CompanyName'], p['MarketingName'], p['Model'],qdids_data['Listing']['Member']['CompanyName'],qdids_data['Listing']['ModelNumber']])
+                plistings_list.append([item['CompanyName'], p['MarketingName'], p['Model'],qdids_data['Listing']['Member']['CompanyName'],qdids_data['Listing']['ModelNumber'],p['DateCreated']])
                 products_file.writerow([item['CompanyName'],
                                         p['ListingId'], p['ProductListingId'], p['MemberId'], p['UserId'],
                                         p['Model'].encode("utf-8"), p['Series'], p['MarketingName'],
@@ -96,7 +96,7 @@ def main():
     manufacturer = sys.argv[2] #withings
 
     result = search(model_number, manufacturer)
-    print "Company Name | Marketing Name | Device Model | Referenced Qualified Design | Model Number \n{0} ".format(result[0])
+    print "Company Name | Marketing Name | Device Model | Referenced Qualified Design | Model Number | Date \n{0} ".format(result[0])
 
 
 if __name__ == '__main__':
