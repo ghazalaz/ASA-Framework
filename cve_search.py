@@ -120,6 +120,8 @@ def main():
     import sys
     keywords = keyword_list
     load_cwe('CWE-listing.csv')
+    if len(sys.argv) > 1:
+        keywords = {(sys.argv[1],sys.argv[2])}
     for company,product in keywords:
         result = search(company,product)
         print "{0} CVE Found: \n ".format(len(result))
