@@ -5,6 +5,7 @@ from blesuite.entities.gatt_device import BLEDevice
 
 PERIPHERAL_ROLE_ADDR = "00:1A:7D:DA:71:13"
 devices = Path("devices/")
+logs_dir = Path("logs/")
 adapter = 0
 PYTHON_PATH = "/home/gamel/venv2/bin/python-sudo.sh"
 PROJECT_PATH = "/home/gamel/PycharmProjects/Framework"
@@ -63,6 +64,11 @@ def hamdist(str1, str2):
             diffs += 1
     return diffs
 
+
+def saveToFile(arr, path):
+    f = open(path,'w');
+    for item in arr:
+        f.write(item+"\n");
 
 from difflib import SequenceMatcher
 
