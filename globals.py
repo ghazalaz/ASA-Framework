@@ -9,6 +9,9 @@ adapter = 0
 PYTHON_PATH = "/home/gamel/venv2/bin/python-sudo.sh"
 PROJECT_PATH = "/home/gamel/PycharmProjects/Framework"
 
+PYTHON_PATH = "/home/ghz/venv2/bin/python"
+PROJECT_PATH = "/home/ghz/PycharmProjects/ASA-Framework"
+
 def print_device(address=""):
     if not address:
         with open(str(devices) + "device_list.txt", "r") as addresses:

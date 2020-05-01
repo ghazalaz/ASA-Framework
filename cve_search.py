@@ -109,11 +109,6 @@ def search(company,product):
         print e
 
 
-
-
-keyword_list = {"MAD Apparel, Inc.","Athos", "Nordic", "nRF51x22"}
-#keyword_list = {"TrackR", "Nordic", "nRF51x22"}
-#keyword_list = {"SimpleLink","BLE-STACK"}
 keyword_list = {("Tapplock","Tapplock one+"),("Adero, Inc.","TrackR bravo"),("Nordic Semiconductor ASA","nRF51x22 CF package")}
 
 def main():
@@ -121,7 +116,7 @@ def main():
     keywords = keyword_list
     load_cwe('CWE-listing.csv')
     for company,product in keywords:
-        result = search(company,product)
+        result = search(company, product)
         print "{0} CVE Found: \n ".format(len(result))
         for cve_obj in result:
             print cve_obj

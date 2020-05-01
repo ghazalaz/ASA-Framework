@@ -14,7 +14,7 @@ sudo /home/ghz/venv2/bin/python /home/ghz/PycharmProjects/ASA-Framework/run.py 1
 
 3.
 sudo /home/ghz/venv2/bin/python /home/ghz/PycharmProjects/ASA-Framework/cve_search.py "device-name" or "company-name"
-... only prints cve details now (cvss,impact,access,cwe,vul-conf,last-modified)
+... prints cve details now (cvss,impact,access,cwe,vul-conf,last-modified)
 
 4.
 

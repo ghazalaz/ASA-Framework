@@ -1,0 +1,1 @@
+"[<EIR_Hdr  len=2 type=flags |<EIR_Flags  flags=general_disc_mode |>>, <EIR_Hdr  len=3 type=incomplete_list_16_bit_svc_uuids |<EIR_IncompleteList16BitServiceUUIDs  svc_uuids=[0xfea6] |>>, <EIR_Hdr  len=15 type=mfg_specific_data |<EIR_Manufacturer_Specific_Data  company_id=0x2f2 data='\\x02\\x00\\x1e?\\x00\\xa8\\xcb{\\x9b\\xa2\\xff\\x0f' |>>]"

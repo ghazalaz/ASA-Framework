@@ -1,0 +1,1 @@
+"[<EIR_Hdr  len=2 type=flags |<EIR_Flags  flags=general_disc_mode+br_edr_not_supported |>>, <EIR_Hdr  len=10 type=mfg_specific_data |<EIR_Manufacturer_Specific_Data  company_id=0x4c data='\\x10\\x05\\x0b\\x1c\\x0b\\xa9\\xea' |>>]"
